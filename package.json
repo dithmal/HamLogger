@@ -1,0 +1,20 @@
+{
+  "name": "hamlogger",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ham radio logging application monorepo.",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @hamlogger/app --filter @hamlogger/server dev",
+    "dev:app": "pnpm --filter @hamlogger/app dev",
+    "dev:server": "pnpm --filter @hamlogger/server dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}
