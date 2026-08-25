@@ -1,12 +1,99 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Band {
+  B_2190M  @map("2190M")
+  B_630M   @map("630M")
+  B_560M   @map("560M")
+  B_160M   @map("160M")
+  B_80M    @map("80M")
+  B_60M    @map("60M")
+  B_40M    @map("40M")
+  B_30M    @map("30M")
+  B_20M    @map("20M")
+  B_17M    @map("17M")
+  B_15M    @map("15M")
+  B_12M    @map("12M")
+  B_10M    @map("10M")
+  B_8M     @map("8M")
+  B_6M     @map("6M")
+  B_5M     @map("5M")
+  B_4M     @map("4M")
+  B_2M     @map("2M")
+  B_1_25M  @map("1.25M")
+  B_70CM   @map("70CM")
+  B_33CM   @map("33CM")
+  B_23CM   @map("23CM")
+  B_13CM   @map("13CM")
+  B_9CM    @map("9CM")
+  B_6CM    @map("6CM")
+  B_3CM    @map("3CM")
+  B_1_25CM @map("1.25CM")
+  B_6MM    @map("6MM")
+  B_4MM    @map("4MM")
+  B_2_5MM  @map("2.5MM")
+  B_2MM    @map("2MM")
+  B_1MM    @map("1MM")
+  SUBMM
+}
+
+enum QslReceivedStatus {
+  Y
+  N
+  R
+  I
+}
+
+enum QslSentStatus {
+  Y
+  N
+  R
+  Q
+  I
+}
+
+enum QslVia {
+  B
+  D
+  E
+}
+
+model Log {
+  id              String            @id @default(uuid()) @db.Uuid
+  call            String            @map("CALL") @db.VarChar(32)
+  qsoDate         DateTime          @map("QSO_DATE") @db.Date
+  timeOn          DateTime          @map("TIME_ON") @db.Time(0)
+  band            Band              @map("BAND")
+  freq            Decimal           @map("FREQ") @db.Decimal(12, 6)
+  mode            String            @map("MODE") @db.VarChar(32)
+  rstSent         String            @map("RST_SENT") @db.VarChar(8)
+  rstRcvd         String            @map("RST_RCVD") @db.VarChar(8)
+  gridsquare      String?           @map("GRIDSQUARE") @db.VarChar(10)
+  dxcc            Int?              @map("DXCC")
+  name            String?           @map("NAME") @db.VarChar(128)
+  qth             String?           @map("QTH") @db.VarChar(128)
+  propMode        String?           @map("PROP_MODE") @db.VarChar(16)
+  submode         String?           @map("SUBMODE") @db.VarChar(32)
+  comment         String?           @map("COMMENT") @db.Text
+  stationCallsign String            @map("STATION_CALLSIGN") @db.VarChar(32)
+  operator        String            @map("OPERATOR") @db.VarChar(32)
+  qslRcvd         QslReceivedStatus @default(N) @map("QSL_RCVD")
+  qslSent         QslSentStatus     @default(N) @map("QSL_SENT")
+  qslRcvdVia      QslVia?           @map("QSL_RCVD_VIA")
+  qslSentVia      QslVia?           @map("QSL_SENT_VIA")
+  qslRdate        DateTime?         @map("QSLRDATE") @db.Date
+  qslSdate        DateTime?         @map("QSLSDATE") @db.Date
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@index([qsoDate], map: "logs_qso_date_idx")
+  @@index([call], map: "logs_call_idx")
+  @@index([stationCallsign], map: "logs_station_callsign_idx")
+  @@index([stationCallsign, qsoDate, timeOn], map: "logs_station_date_time_idx")
+  @@map("logs")
 }
