@@ -1,4 +1,4 @@
-import type { Contact, LogsResponse } from '@/types/contact';
+import type { Contact, ContactDetails, LogsResponse } from '@/types/contact';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
@@ -26,6 +26,21 @@ export async function fetchContacts(): Promise<Contact[]> {
   if (!response.ok) throw new Error(`Unable to load contacts (${response.status})`);
   const payload = (await response.json()) as LogsResponse;
   return payload.data;
+}
+
+export async function fetchContact(id: string): Promise<ContactDetails> {
+  const response = await fetch(`${apiBaseUrl}/logs/${id}`);
+  if (!response.ok) throw new Error(`Unable to load contact (${response.status})`);
+  return (await response.json()) as ContactDetails;
+}
+
+export async function updateContact(id: string, payload: Record<string, unknown>): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}/logs/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) throw new Error(`Unable to update contact (${response.status})`);
 }
 
 export async function createContact(formData: FormData): Promise<void> {

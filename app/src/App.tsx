@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { ContactForm } from '@/components/contact-form';
 import { ContactsTable } from '@/components/contacts-table';
 import { DeleteContactDialog } from '@/components/delete-contact-dialog';
+import { EditContactDialog } from '@/components/edit-contact-dialog';
+import { QslManagerDialog } from '@/components/qsl-manager-dialog';
 import { deleteContact, fetchContacts } from '@/lib/contacts-api';
 import type { Contact } from '@/types/contact';
 
@@ -11,6 +13,8 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [qslContact, setQslContact] = useState<Contact | null>(null);
 
   async function loadContacts() {
     try {
@@ -33,8 +37,10 @@ export function App() {
   return <main className="min-h-svh bg-background text-foreground">
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
       <ContactForm onSubmitted={loadContacts} />
-      <ContactsTable contacts={contacts} isLoading={isLoading} error={error} onDelete={setSelectedContact} />
+      <ContactsTable contacts={contacts} isLoading={isLoading} error={error} onDelete={setSelectedContact} onEdit={setEditingContact} onQslManager={setQslContact} />
       <DeleteContactDialog contact={selectedContact} isDeleting={isDeleting} onOpenChange={(open) => { if (!open && !isDeleting) setSelectedContact(null); }} onConfirm={() => void handleDelete()} />
+      <EditContactDialog contact={editingContact} onOpenChange={(open) => { if (!open) setEditingContact(null); }} onSaved={loadContacts} />
+      <QslManagerDialog contact={qslContact} onOpenChange={(open) => { if (!open) setQslContact(null); }} onSaved={loadContacts} />
     </div>
   </main>;
 }

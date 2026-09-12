@@ -5,13 +5,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import type { Contact } from '@/types/contact';
 
-type ContactsTableProps = { contacts: Contact[]; isLoading: boolean; error: string | null; onDelete: (contact: Contact) => void };
+type ContactsTableProps = { contacts: Contact[]; isLoading: boolean; error: string | null; onDelete: (contact: Contact) => void; onEdit: (contact: Contact) => void; onQslManager: (contact: Contact) => void };
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short', timeZone: 'UTC', year: 'numeric' }).format(new Date(`${value}T00:00:00Z`));
 }
 
-export function ContactsTable({ contacts, isLoading, error, onDelete }: ContactsTableProps) {
+export function ContactsTable({ contacts, isLoading, error, onDelete, onEdit, onQslManager }: ContactsTableProps) {
   return <section aria-labelledby="recent-contacts-title" className="mt-6 max-w-5xl">
     <div className="overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
       <div className="border-b px-5 py-4 sm:px-6">
@@ -49,7 +49,8 @@ export function ContactsTable({ contacts, isLoading, error, onDelete }: Contacts
                     <Button variant="ghost" size="icon" className="size-8"><MoreHorizontalIcon /><span className="sr-only">Open actions for {contact.call}</span></Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => onEdit(contact)}>Edit</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => onQslManager(contact)}>QSL Manager</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem variant="destructive" onSelect={() => onDelete(contact)}>Delete</DropdownMenuItem>
                   </DropdownMenuContent>
