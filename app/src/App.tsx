@@ -7,6 +7,8 @@ import { QslManagerDialog } from '@/components/qsl-manager-dialog';
 import { deleteContact, fetchContacts } from '@/lib/contacts-api';
 import type { Contact } from '@/types/contact';
 
+const spaceBackgroundUrl = 'https://app.worldradioleague.com/static/media/spaceBg.346ffa44f3f8196bfdff7cdc4a60c738.svg';
+
 export function App() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +36,10 @@ export function App() {
     try { await deleteContact(selectedContact.id); setSelectedContact(null); await loadContacts(); } catch { setError('Unable to delete contact. Check that the server is running.'); } finally { setIsDeleting(false); }
   }
 
-  return <main className="min-h-svh bg-background text-foreground">
+  return <main
+    className="min-h-svh bg-background text-foreground"
+    style={{ backgroundImage: `url(${spaceBackgroundUrl})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}
+  >
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
       <ContactForm onSubmitted={loadContacts} />
       <ContactsTable contacts={contacts} isLoading={isLoading} error={error} onDelete={setSelectedContact} onEdit={setEditingContact} onQslManager={setQslContact} />
