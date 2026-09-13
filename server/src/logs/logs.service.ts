@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, type Log } from '@prisma/client';
-import { CreateLogDto, ListLogsQueryDto, UpdateLogDto } from './dto/log.dto';
+import { BulkUpdateQslDto, CreateLogDto, ListLogsQueryDto, UpdateLogDto } from './dto/log.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 const listSelect = {
@@ -11,7 +11,11 @@ const listSelect = {
   qsoDate: true,
   timeOn: true,
   rstSent: true,
-  rstRcvd: true
+  rstRcvd: true,
+  qslRcvd: true,
+  qslRdate: true,
+  qslSent: true,
+  qslSdate: true
 } satisfies Prisma.LogSelect;
 
 @Injectable()
@@ -30,14 +34,21 @@ export class LogsService {
     const page = query.page ?? 1;
     const limit = query.limit ?? 50;
     const skip = (page - 1) * limit;
+    const where: Prisma.LogWhereInput = {
+      ...(query.call ? { call: { contains: query.call, mode: 'insensitive' } } : {}),
+      ...(query.qslSent ? { qslSent: query.qslSent } : {}),
+      ...(query.qslRcvd ? { qslRcvd: query.qslRcvd } : {}),
+      ...(query.qsoDateFrom || query.qsoDateTo ? { qsoDate: { ...(query.qsoDateFrom ? { gte: this.toDate(query.qsoDateFrom) } : {}), ...(query.qsoDateTo ? { lte: this.toDate(query.qsoDateTo) } : {}) } } : {})
+    };
     const [logs, total] = await this.prisma.$transaction([
       this.prisma.log.findMany({
         select: listSelect,
+        where,
         orderBy: [{ qsoDate: 'desc' }, { timeOn: 'desc' }, { id: 'desc' }],
         skip,
         take: limit
       }),
-      this.prisma.log.count()
+      this.prisma.log.count({ where })
     ]);
 
     return {
@@ -47,6 +58,17 @@ export class LogsService {
       total,
       totalPages: Math.ceil(total / limit)
     };
+  }
+
+  async bulkUpdateQsl(input: BulkUpdateQslDto) {
+    const data: Prisma.LogUpdateManyMutationInput = {};
+    if (input.qslRcvd !== undefined) data.qslRcvd = input.qslRcvd;
+    if (input.qslSent !== undefined) data.qslSent = input.qslSent;
+    if (input.qslRdate !== undefined) data.qslRdate = input.qslRdate ? this.toDate(input.qslRdate) : null;
+    if (input.qslSdate !== undefined) data.qslSdate = input.qslSdate ? this.toDate(input.qslSdate) : null;
+
+    const result = await this.prisma.log.updateMany({ where: { id: { in: input.ids } }, data });
+    return { updated: result.count };
   }
 
   async findOne(id: string) {
@@ -148,7 +170,11 @@ export class LogsService {
       qsoDate: this.formatDate(log.qsoDate),
       timeOn: this.formatTime(log.timeOn),
       rstSent: log.rstSent,
-      rstRcvd: log.rstRcvd
+      rstRcvd: log.rstRcvd,
+      qslRcvd: log.qslRcvd,
+      qslRdate: log.qslRdate ? this.formatDate(log.qslRdate) : null,
+      qslSent: log.qslSent,
+      qslSdate: log.qslSdate ? this.formatDate(log.qslSdate) : null
     };
   }
 

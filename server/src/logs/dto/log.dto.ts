@@ -2,9 +2,11 @@ import { Transform, Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 import {
   IsEnum,
+  IsArray,
   IsInt,
   IsNumber,
   IsOptional,
+  IsUUID,
   IsString,
   Matches,
   Max,
@@ -146,4 +148,47 @@ export class ListLogsQueryDto {
   @Min(1)
   @Max(50)
   limit?: number;
+
+  @IsOptional()
+  @Transform(normalize)
+  @IsString()
+  call?: string;
+
+  @IsOptional()
+  @IsEnum(QslSentStatus)
+  qslSent?: QslSentStatus;
+
+  @IsOptional()
+  @IsEnum(QslReceivedStatus)
+  qslRcvd?: QslReceivedStatus;
+
+  @IsOptional()
+  @Matches(DATE_PATTERN)
+  qsoDateFrom?: string;
+
+  @IsOptional()
+  @Matches(DATE_PATTERN)
+  qsoDateTo?: string;
+}
+
+export class BulkUpdateQslDto {
+  @IsArray()
+  @IsUUID('4', { each: true })
+  ids!: string[];
+
+  @IsOptional()
+  @IsEnum(QslReceivedStatus)
+  qslRcvd?: QslReceivedStatus;
+
+  @IsOptional()
+  @IsEnum(QslSentStatus)
+  qslSent?: QslSentStatus;
+
+  @IsOptional()
+  @Matches(DATE_PATTERN)
+  qslRdate?: string | null;
+
+  @IsOptional()
+  @Matches(DATE_PATTERN)
+  qslSdate?: string | null;
 }

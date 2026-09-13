@@ -6,9 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  HttpCode,
+  HttpStatus,
   Query
 } from '@nestjs/common';
-import { CreateLogDto, ListLogsQueryDto, UpdateLogDto } from './dto/log.dto';
+import { BulkUpdateQslDto, CreateLogDto, ListLogsQueryDto, UpdateLogDto } from './dto/log.dto';
 import { LogsService } from './logs.service';
 
 @Controller('logs')
@@ -23,6 +25,12 @@ export class LogsController {
   @Get()
   findAll(@Query() query: ListLogsQueryDto) {
     return this.logsService.findAll(query);
+  }
+
+  @Patch('bulk-qsl')
+  @HttpCode(HttpStatus.OK)
+  bulkUpdateQsl(@Body() input: BulkUpdateQslDto) {
+    return this.logsService.bulkUpdateQsl(input);
   }
 
   @Get(':id')

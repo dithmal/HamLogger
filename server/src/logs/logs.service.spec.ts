@@ -91,7 +91,11 @@ describe('LogsService', () => {
           qsoDate: '2026-08-25',
           timeOn: '14:30:00',
           rstSent: '-10',
-          rstRcvd: '-12'
+          rstRcvd: '-12',
+          qslRcvd: 'N',
+          qslRdate: null,
+          qslSent: 'N',
+          qslSdate: null
         }
       ],
       page: 2,
