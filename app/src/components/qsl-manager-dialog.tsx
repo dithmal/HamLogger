@@ -82,7 +82,8 @@ export function QslManagerDialog({ contact, onOpenChange, onSaved }: QslManagerD
           <div className="flex items-center gap-3">
             <Checkbox id="qsl-received" checked={received} onCheckedChange={(checked) => setReceived(checked === true)} />
             <label htmlFor="qsl-received" className="text-sm font-medium">QSL received</label>
-          </div>{received && <DateButton date={receivedDate} onSelect={setReceivedDate} label="Set received date" />}</div>
+          </div>{received && <DateButton date={receivedDate} onSelect={setReceivedDate} label="Set received date" />}
+        </div>
       </div>}
       {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
       <DialogFooter>

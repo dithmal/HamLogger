@@ -6,6 +6,11 @@ export type Contact = {
   rstSent: string;
   rstRcvd: string;
   qsoDate: string;
+  timeOn?: string;
+  qslRcvd?: string;
+  qslRdate?: string | null;
+  qslSent?: string;
+  qslSdate?: string | null;
 };
 
 export type ContactDetails = Contact & {

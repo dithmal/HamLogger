@@ -59,7 +59,31 @@ body {
     linear-gradient(180deg, oklch(0.17 0.1 283), oklch(0.12 0.08 282));
 }
 
-#root > main {
+.gradient-pill-button {
+  height: 2rem;
+  width: 100%;
+  border: 2px solid transparent;
+  border-radius: 9999px;
+  padding-inline: 2rem;
+  color: white;
+  font-weight: 400;
+  background: linear-gradient(var(--card), var(--card)) padding-box,
+    linear-gradient(90deg, #2697b7, #d41472) border-box !important;
+  box-shadow: none;
+}
+
+.gradient-pill-button:hover {
+  background: linear-gradient(var(--card), var(--card)) padding-box,
+    linear-gradient(90deg, #2697b7, #d41472) border-box !important;
+}
+
+@media (min-width: 640px) {
+  .gradient-pill-button {
+    width: auto;
+  }
+}
+
+#root>main {
   background:
     radial-gradient(circle at 14% 16%, oklch(0.92 0.02 286 / 55%) 0 1px, transparent 2px),
     radial-gradient(circle at 48% 10%, oklch(0.81 0.16 192 / 35%) 0 1px, transparent 2px),
@@ -67,6 +91,7 @@ body {
     radial-gradient(circle at 24% 74%, oklch(0.92 0.02 286 / 45%) 0 1px, transparent 2px),
     linear-gradient(180deg, oklch(0.16 0.1 283), oklch(0.11 0.08 282));
 }
+
 @theme inline {
   --font-heading: Play, Barlow, sans-serif;
   --font-sans: Barlow, sans-serif;
@@ -148,12 +173,15 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
+
   h1,
   h2,
   h3,

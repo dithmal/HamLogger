@@ -18,7 +18,7 @@ const bandRanges = [
 ] as const;
 
 export function interpretBand(frequency: number) {
-  return bandRanges.find((range) => frequency <= range.max)?.band ?? null;
+  return bandRanges.find((range) => frequency <= range.max)?.band ?? null; // might not handle out of band stuff
 }
 
 export async function fetchContacts(): Promise<Contact[]> {
@@ -28,8 +28,32 @@ export async function fetchContacts(): Promise<Contact[]> {
   return payload.data;
 }
 
+export type QslSearch = {
+  call?: string;
+  qslSent?: string;
+  qslRcvd?: string;
+  qsoDateFrom?: string;
+  qsoDateTo?: string
+};
+
+export async function fetchQslContacts(search: QslSearch = {}): Promise<Contact[]> {
+  const params = new URLSearchParams({ limit: '50' });
+  Object.entries(search).forEach(([key, value]) => { if (value) params.set(key, value); });
+  const response = await fetch(`${apiBaseUrl}/logs?${params}`);
+
+  if (!response.ok) throw new Error(`Unable to load QSL contacts (${response.status})`);
+  return ((await response.json()) as LogsResponse).data;
+}
+
+export async function bulkUpdateQsl(ids: string[], payload: { qslSent?: string; qslRcvd?: string; qslSdate?: string | null; qslRdate?: string | null }): Promise<void> {
+  const response = await fetch(`${apiBaseUrl}/logs/bulk-qsl`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids, ...payload }) });
+
+  if (!response.ok) throw new Error(`Unable to update QSL contacts (${response.status})`);
+}
+
 export async function fetchContact(id: string): Promise<ContactDetails> {
   const response = await fetch(`${apiBaseUrl}/logs/${id}`);
+
   if (!response.ok) throw new Error(`Unable to load contact (${response.status})`);
   return (await response.json()) as ContactDetails;
 }
@@ -40,6 +64,7 @@ export async function updateContact(id: string, payload: Record<string, unknown>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
+
   if (!response.ok) throw new Error(`Unable to update contact (${response.status})`);
 }
 

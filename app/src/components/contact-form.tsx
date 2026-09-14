@@ -44,7 +44,9 @@ export function ContactForm({ onSubmitted }: ContactFormProps) {
           <label className="space-y-2 text-sm font-medium" htmlFor="rst-received">RST received<input id="rst-received" name="rstReceived" defaultValue={599} type="number" className={inputClass} /></label>
           <label className="space-y-2 text-sm font-medium" htmlFor="frequency">Frequency<span className="relative block"><input id="frequency" name="frequency" inputMode="decimal" className={`${inputClass} pr-12`} /><span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-xs font-normal text-muted-foreground">MHz</span></span></label>
           <label className="space-y-2 text-sm font-medium" htmlFor="mode">Mode<Select defaultValue="CW" name="mode"><SelectTrigger id="mode" className="w-full"><SelectValue /></SelectTrigger><SelectContent position="popper"><SelectItem value="CW">CW</SelectItem><SelectItem value="SSB">SSB</SelectItem><SelectItem value="FM">FM</SelectItem><SelectItem value="FT8">FT8</SelectItem></SelectContent></Select></label>
-          <div className="flex items-end sm:col-span-2 lg:col-span-5"><Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">{isSubmitting ? 'Logging...' : 'Log contact'}</Button></div>
+          <div className="flex items-end sm:col-span-2 lg:col-span-5">
+            <Button type="submit" disabled={isSubmitting} className="gradient-pill-button">{isSubmitting ? 'Logging...' : 'Log contact'}</Button>
+          </div>
         </form>
         {(error || message) && <p className={`border-t px-5 py-3 text-sm sm:px-6 ${error ? 'text-destructive' : 'text-muted-foreground'}`} role={error ? 'alert' : 'status'}>{error ?? message}</p>}
       </div>

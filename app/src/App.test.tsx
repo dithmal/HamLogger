@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { App } from './App';
 
@@ -37,5 +37,15 @@ describe('App', () => {
     expect(screen.getByRole('table', { name: /recent contacts loaded from the server/i })).toBeInTheDocument();
     expect(await screen.findByText('4S7RS')).toBeInTheDocument();
     expect(screen.getByText('7.060 MHz')).toBeInTheDocument();
+  });
+
+  it('switches to the QSL Manager screen', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ data: [] }), { status: 200 })));
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /qsl manager/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: /qsl manager/i }));
+
+    expect(screen.getByRole('heading', { name: /qsl manager/i })).toBeInTheDocument();
   });
 });
